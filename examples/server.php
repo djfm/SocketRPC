@@ -13,7 +13,7 @@ echo sprintf("Server ready to accept connections on `%s`.\n", $server->getAddres
 $server->on('connection', function ($clientId) {
     echo "Welcome, client #$clientId!\n";
 })->on('disconnected', function ($clientId) {
-    echo "Bye, client #$clientId\n";
+    echo "Bye, client #$clientId!\n";
 })->on('send', function ($data) {
     var_dump($data);
 })->on('query', function ($query, $respond) {

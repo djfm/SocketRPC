@@ -66,7 +66,7 @@ The examples can be found in the `examples` folder in this repo.
 
 ## Design
 
-The server side is asynchronous, so it can handle many connections smoothly.
+The server side is asynchronous, so it can handle many simultaneous connections smoothly.
 
 But on the client, requests are synchronous, because this is PHP, and the async paradigm quickly becomes tedious.
 

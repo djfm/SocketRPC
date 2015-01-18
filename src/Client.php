@@ -43,15 +43,16 @@ class Client implements ClientInterface
         $this->checkConnected();
 
         $payload = StreamParser::buildRequestString(json_encode($data));
-        $retry = 2;
+        $maxRetries = $retry = 2;
         for(;;) {
             $sent = @stream_socket_sendto($this->socket, $payload);
             if ($sent < 0) {
                 if ($retry > 0) {
                     --$retry;
-                    sleep(1);
+                    // sleep for longer and longer
+                    sleep($maxRetries - $retry + 1);
                 } else {
-                    throw new CouldNotSendDataException(sprintf('Failed to send `%d` bytes over the wire.', strlen($payload)));                    
+                    throw new CouldNotSendDataException(sprintf('Failed to send `%d` bytes over the wire.', strlen($payload)));
                 }
             }
             else if ($sent === strlen($payload)) {

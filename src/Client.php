@@ -33,7 +33,7 @@ class Client implements ClientInterface
 
         $this->checkConnected();
 
-        stream_set_blocking($this->socket, false);
+        stream_set_blocking($this->socket, 0);
 
         return $this;
     }

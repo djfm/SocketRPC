@@ -11,7 +11,8 @@ $what = $argv[1];
 if ($what === 'server') {
     $server = new Server();
     $remote = [
-        'sent' => null
+        'sent' => null,
+        'multiple' => Tests\SocketRPCTest::$multiple
     ];
 
     $server->on('send', function ($data) use (&$remote) {
@@ -26,7 +27,21 @@ if ($what === 'server') {
         Tests\SocketRPCTest::onQuery($remote, $data, $respond);
     });
 
+    $server->on('connection', function ($clientId) use (&$remote) {
+        Tests\SocketRPCTest::onConnection($remote, $clientId);
+    });
+
+    $server->on('disconnected', function ($clientId) use (&$remote) {
+        Tests\SocketRPCTest::onDisconnected($remote, $clientId);
+    });
+
     $server->bind();
     echo $server->getAddress() . "\n";
     $server->run();
+} else if ($what === 'client') {
+    $address = $argv[2];
+    $method = $argv[3];
+    $client = new Client();
+    $client->connect($address);
+    Tests\SocketRPCTest::$method($client);
 }

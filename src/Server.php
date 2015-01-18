@@ -43,7 +43,7 @@ class Server implements ServerInterface, EventEmitterInterface
             throw new CouldNotBindToAddressException(sprintf("Server could not be started on `%s`.", $this->address));
         }
 
-        stream_set_blocking($this->server, false);
+        stream_set_blocking($this->server, 0);
 
         $this->onRead($this->server, function ($stream) {
             $this->acceptClient($stream);
@@ -84,7 +84,7 @@ class Server implements ServerInterface, EventEmitterInterface
     {
         $client = stream_socket_accept($server);
         if ($client) {
-            stream_set_blocking($client, false);
+            stream_set_blocking($client, 0);
 
             $clientId = $this->clientId++;
             $this->clientsById[$clientId] = $client;
@@ -146,6 +146,7 @@ class Server implements ServerInterface, EventEmitterInterface
 
         while ($this->running) {
             $read = $this->getReadStreamsArray();
+            // print_r($read);
             $write = [];
             $except = [];
             stream_select($read, $write, $except, 0, 10000);

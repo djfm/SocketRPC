@@ -144,6 +144,8 @@ class Server implements ServerInterface, EventEmitterInterface
 
         $this->running = true;
 
+        $this->emit('run');
+
         while ($this->running) {
             $read = $this->getReadStreamsArray();
             $write = [];

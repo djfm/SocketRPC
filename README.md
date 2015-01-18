@@ -6,6 +6,12 @@ The server is async, inspired by the great work at [reactphp](https://github.com
 Think HTTP, without the structure. It's convenient. No POST, no GET, just JSON data and a notion of whether the client wants a reply or not.
 The rest of the protocol is for you to define at your leisure.
 
+[![Build Status](https://travis-ci.org/djfm/SocketRPC.svg?branch=master)](https://travis-ci.org/djfm/SocketRPC)
+
+## Installation
+
+This is on packagist, just add `"djfm/socket-rpc": "dev-master"` to your composer.json.
+
 ## Disclosure
 
 This is an early version, don't use it for anything too serious.

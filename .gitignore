@@ -1,2 +1,4 @@
 /vendor
-composer.phar
+/composer.phar
+/server.php
+/client.php

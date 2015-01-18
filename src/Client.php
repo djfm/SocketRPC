@@ -4,6 +4,7 @@ namespace djfm\SocketRPC;
 
 use djfm\SocketRPC\Exception\CouldNotConnectToServerException;
 use djfm\SocketRPC\Exception\ConnectionClosedByServerException;
+use djfm\SocketRPC\Exception\CouldNotSendDataException;
 
 class Client implements ClientInterface
 {
@@ -41,7 +42,18 @@ class Client implements ClientInterface
     {
         $this->checkConnected();
 
-        fwrite($this->socket, StreamParser::buildRequestString(json_encode($data)));
+        $payload = StreamParser::buildRequestString(json_encode($data));
+        for(;;) {
+            $sent = stream_socket_sendto($this->socket, $payload);
+            if ($sent < 0) {
+                throw new CouldNotSendDataException(sprintf('Failed to send `%d` bytes over the wire.'), strlen($payload));
+            }
+            else if ($sent === strlen($payload)) {
+                break;
+            } else {
+                $payload = substr($payload, $sent);
+            }
+        }
 
         return $this;
     }

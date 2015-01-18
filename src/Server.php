@@ -16,10 +16,28 @@ class Server implements ServerInterface, EventEmitterInterface
     private $readStreams = [];
     private $clientsById = [], $idsByClient = [], $clientId = 0;
 
-    public function bind($port, $hostname = '127.0.0.1')
+    public function bind($port = null, $hostname = '127.0.0.1')
     {
-        $this->address = 'tcp://' . $hostname . ':' . $port;
-        $this->server = stream_socket_server($this->address);
+        $this->port = $port;
+
+        // if port is null, look for the first available one starting at 1337
+        if ($port === null) {
+            $this->port = 1337;
+        }
+
+        do {
+            $this->address = 'tcp://' . $hostname . ':' . $this->port;
+            $this->server = @stream_socket_server($this->address);
+
+            if ($port === null) {
+                if (!$this->server) {
+                    ++$this->port;
+                }
+            } else {
+                break;
+            }
+
+        } while (!$this->server);
 
         if (!$this->server) {
             throw new CouldNotBindToAddressException(sprintf("Server could not be started on `%s`.", $this->address));

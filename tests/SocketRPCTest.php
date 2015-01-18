@@ -16,9 +16,6 @@ class SocketRPCTest extends PHPUnit_Framework_TestCase
 
     public static function setupBeforeClass()
     {
-        /*self::$serverAddress = 'tcp://127.0.0.1:1337';
-        self::$client = self::newClient();
-        return;*/
         $spawnHelperPath = __DIR__ . DIRECTORY_SEPARATOR . 'spawnHelper.php';
         $command = PHP_BINARY . ' ' . $spawnHelperPath . ' ' . 'server';
         self::$serverProc = popen($command, 'r');

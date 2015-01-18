@@ -146,10 +146,9 @@ class Server implements ServerInterface, EventEmitterInterface
 
         while ($this->running) {
             $read = $this->getReadStreamsArray();
-            // print_r($read);
             $write = [];
             $except = [];
-            stream_select($read, $write, $except, 0, 10000);
+            stream_select($read, $write, $except, 0, 200000);
 
             foreach ($read as $readStream) {
                 $this->readStreams[$readStream]['callback']($readStream);
@@ -164,5 +163,23 @@ class Server implements ServerInterface, EventEmitterInterface
 
             $this->emit('tick');
         }
+
+        foreach ($this->getReadStreamsArray() as $stream) {
+            stream_socket_shutdown($stream, STREAM_SHUT_RDWR);
+        }
+
+        $this->readStreams = [];
+        $this->clientsById = [];
+        $this->idsByClient = [];
+
+        $this->emit('stopped');
+    }
+
+    public function stop()
+    {
+        $this->running = false;
+        $this->emit('stop');
+
+        return $this;
     }
 }

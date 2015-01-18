@@ -15,9 +15,9 @@ if ($what === 'server') {
         'multiple' => Tests\SocketRPCTest::$multiple
     ];
 
-    $server->on('send', function ($data) use (&$remote) {
+    $server->on('send', function ($data) use (&$remote, $server) {
         if ($data === 'kill') {
-            die();
+            $server->stop();
         } else {
             Tests\SocketRPCTest::onSend($remote, $data);
         }

@@ -38,6 +38,12 @@ class Client implements ClientInterface
         return $this;
     }
 
+    public function disconnect()
+    {
+        stream_socket_shutdown($this->socket);
+        return $this;
+    }
+
     private function transmit($data)
     {
         $this->checkConnected();

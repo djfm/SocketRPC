@@ -59,7 +59,7 @@ class Server implements ServerInterface, EventEmitterInterface
 
     private function onRead($stream, $callback)
     {
-        $this->readStreams[$stream] = [
+        $this->readStreams[(int)$stream] = [
             'stream' => $stream,
             'callback' => $callback,
             'dead' => false
@@ -68,7 +68,7 @@ class Server implements ServerInterface, EventEmitterInterface
 
     private function offRead($stream)
     {
-        $this->readStreams[$stream]['dead'] = true;
+        $this->readStreams[(int)$stream]['dead'] = true;
 
         return $this;
     }
@@ -88,7 +88,7 @@ class Server implements ServerInterface, EventEmitterInterface
 
             $clientId = $this->clientId++;
             $this->clientsById[$clientId] = $client;
-            $this->idsByClient[$client] = $clientId;
+            $this->idsByClient[(int)$client] = $clientId;
 
             $parser = new StreamParser();
 
@@ -153,11 +153,11 @@ class Server implements ServerInterface, EventEmitterInterface
             stream_select($read, $write, $except, 0, 200000);
 
             foreach ($read as $readStream) {
-                $this->readStreams[$readStream]['callback']($readStream);
-                if ($this->readStreams[$readStream]['dead']) {
-                    unset($this->readStreams[$readStream]);
-                    $clientId = $this->idsByClient[$readStream];
-                    unset($this->idsByClient[$readStream]);
+                $this->readStreams[(int)$readStream]['callback']($readStream);
+                if ($this->readStreams[(int)$readStream]['dead']) {
+                    unset($this->readStreams[(int)$readStream]);
+                    $clientId = $this->idsByClient[(int)$readStream];
+                    unset($this->idsByClient[(int)$readStream]);
                     unset($this->clientsById[$clientId]);
                     $this->emit('disconnected', $clientId);
                 }

@@ -14,9 +14,11 @@ $server->on('connection', function ($clientId) {
     echo "Welcome, client #$clientId!\n";
 })->on('disconnected', function ($clientId) {
     echo "Bye, client #$clientId!\n";
-})->on('send', function ($data) {
+})->on('send', function ($data, $clientId) {
+    echo "Got data from $clientId\n";
     var_dump($data);
-})->on('query', function ($query, $respond) {
+})->on('query', function ($query, $respond, $clientId) {
+    echo "Got query from $clientId\n";
     var_dump($query);
     $respond(42);
 });

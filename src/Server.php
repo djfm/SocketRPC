@@ -92,14 +92,14 @@ class Server implements ServerInterface, EventEmitterInterface
 
             $parser = new StreamParser();
 
-            $parser->on('data', function ($data) use ($client) {
+            $parser->on('data', function ($data) use ($client, $clientId) {
                 $data = json_decode($data, true);
                 if (json_last_error() === JSON_ERROR_NONE) {
                     if (is_array($data) && isset($data['type'])) {
                         $type = $data['type'];
                         $payload = array_key_exists('data', $data) ? $data['data'] : null;
                         if ($type === 'send') {
-                            $this->emit('send', $payload);
+                            $this->emit('send', $payload, $clientId);
                         } else if ($type === 'query') {
                             $respondCalled = false;
                             $respond = function ($reply) use ($client, &$respondCalled) {
@@ -110,7 +110,7 @@ class Server implements ServerInterface, EventEmitterInterface
                                 $respondCalled = true;
                                 fwrite($client, StreamParser::buildRequestString(json_encode($reply)));
                             };
-                            $this->emit('query', $payload, $respond);
+                            $this->emit('query', $payload, $respond, $clientId);
                             if (!$respondCalled) {
                                 $respond(null);
                             }

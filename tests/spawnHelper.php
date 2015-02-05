@@ -4,7 +4,7 @@ namespace djfm\SocketRPC;
 
 @ini_set('display_errors', 'on');
 
-require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+require __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'find_autoload.php';
 
 $what = $argv[1];
 

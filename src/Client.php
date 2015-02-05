@@ -18,7 +18,7 @@ class Client implements ClientInterface
 
     private function checkConnected()
     {
-        if (!$this->socket) {
+        if (!$this->socket || feof($this->socket)) {
             throw new CouldNotConnectToServerException(sprintf('Could not connect to server at `%s`.', $this->serverAddress));
         }
 

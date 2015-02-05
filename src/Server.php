@@ -127,7 +127,7 @@ class Server implements ServerInterface, EventEmitterInterface
                 }
 
                 // The connection is dead
-                if ('' === $data || false === $data || !is_resource($client) || feof($client)) {
+                if ('' === $data || false === $data) {
                     $this->offRead($client);
                 }
             });

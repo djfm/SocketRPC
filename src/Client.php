@@ -40,7 +40,7 @@ class Client implements ClientInterface
 
     public function disconnect()
     {
-        stream_socket_shutdown($this->socket);
+        stream_socket_shutdown($this->socket, STREAM_SHUT_RDWR);
         return $this;
     }
 
@@ -68,6 +68,8 @@ class Client implements ClientInterface
                 $attempt = 0;
             }
         }
+
+        fflush($this->socket);
 
         return $this;
     }

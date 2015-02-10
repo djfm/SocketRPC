@@ -43,6 +43,7 @@ class StreamParser implements EventEmitterInterface
                     $this->emit('data', $this->body);
                     $this->buffer = substr($this->buffer, $this->contentLength);
                     $this->state = self::BEFORE_REQUEST;
+                    $continue = true;
                 }
             }
         } while ($continue);

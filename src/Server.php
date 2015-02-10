@@ -109,6 +109,7 @@ class Server implements ServerInterface, EventEmitterInterface
                                 }
                                 $respondCalled = true;
                                 fwrite($client, StreamParser::buildRequestString(json_encode($reply)));
+                                fflush($client);
                             };
                             $this->emit('query', $payload, $respond, $clientId);
                             if (!$respondCalled) {
@@ -153,13 +154,15 @@ class Server implements ServerInterface, EventEmitterInterface
             stream_select($read, $write, $except, 0, 200000);
 
             foreach ($read as $readStream) {
-                $this->readStreams[(int)$readStream]['callback']($readStream);
+
                 if ($this->readStreams[(int)$readStream]['dead']) {
                     unset($this->readStreams[(int)$readStream]);
                     $clientId = $this->idsByClient[(int)$readStream];
                     unset($this->idsByClient[(int)$readStream]);
                     unset($this->clientsById[$clientId]);
                     $this->emit('disconnected', $clientId);
+                } else {
+                    $this->readStreams[(int)$readStream]['callback']($readStream);
                 }
             }
 

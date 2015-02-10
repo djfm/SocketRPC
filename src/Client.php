@@ -49,22 +49,23 @@ class Client implements ClientInterface
         $this->checkConnected();
 
         $payload = StreamParser::buildRequestString(json_encode($data));
-        $maxRetries = $retry = 2;
-        for(;;) {
-            $sent = @stream_socket_sendto($this->socket, $payload);
+
+        $pos = 0;
+        $chunkSize = 4096;
+        $maxAttempts = 3;
+        $attempt = 0;
+        while ($pos < strlen($payload)) {
+            $sent = @stream_socket_sendto($this->socket, substr($payload, $pos, $chunkSize));
             if ($sent < 0) {
-                if ($retry > 0) {
-                    --$retry;
-                    // sleep for longer and longer
-                    sleep($maxRetries - $retry + 1);
+                if ($attempt < $maxAttempts) {
+                    sleep(1);
+                    $attempt++;
                 } else {
-                    throw new CouldNotSendDataException(sprintf('Failed to send `%d` bytes over the wire.', strlen($payload)));
+                    throw new CouldNotSendDataException(sprintf('Failed to send `%d` bytes over the wire.', $chunkSize));
                 }
-            }
-            else if ($sent === strlen($payload)) {
-                break;
             } else {
-                $payload = substr($payload, $sent);
+                $pos += $sent;
+                $attempt = 0;
             }
         }
 
